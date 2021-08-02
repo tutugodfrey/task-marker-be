@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.db.deployment.name }}
+  namespace: {{ .Values.namespace.name }}
+  labels:
+    run: {{ .Values.selector.run }}
+spec:
+  replicas: {{ .Values.db.deployment.replicaCount }}
+  selector:
+    matchLabels:
+      run: {{ .Values.selector.run }}
+  template:
+    metadata:
+      labels:
+        run: {{ .Values.selector.run }}
+    spec:
+      containers:
+      - name: {{ .Values.db.container.name }}
+        image: {{ .Values.db.container.imageRepository }}:{{ .Values.db.container.imageTag }}
+        env:
+          - name: POSTGRES_PASSWORD
+            value: postgres
+          - name: POSTGRES_USER
+            value: postgres
+          - name: POSTGRES_HOST_AUTH_METHOD
+            value: trust
+        resources:
+        #  requests:
+         #   cpu: 500m
+          #  memory: 2Gi
+          limits:
+           cpu: {{ .Values.db.resources.limits.cpu }}
+           memory: {{ .Values.db.resources.limits.memory }}
+        ports:
+        - name: db-port
+          containerPort: {{ .Values.db.container.containerPort }}
+        volumeMounts:
+        - name: todoapp-db-volume
+          mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: todoapp-db-volume
+        emptyDir: {}

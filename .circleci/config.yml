@@ -65,3 +65,18 @@ jobs:
           name: Send coverage report
           command:
             ./cc-test-reporter  after-build --coverage-input-type lcov
+
+  build_backend_image:
+    steps:
+      - run:
+          name: source function
+          command: |
+            . ./docker-helper.sh
+            build-image-be
+      
+      - run:
+          name: push image to docker hub
+          command: |
+            . /docker-helper.sh
+            push-image-fe
+  build_frontend_image:

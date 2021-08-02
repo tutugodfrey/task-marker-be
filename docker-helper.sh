@@ -1,11 +1,8 @@
 #! /bin/bash
 
 IMAGE_NAME_BE="tutug/todoapp-be"
-IMAGE_NAME_FE="tutug/todoapp-fe"
 CONTAINER_NAME_BE=todo-container-be
-CONTAINER_NAME_FE=todo-container-fe
 PORT_BE=3005
-PORT_FE=80
 API_URL="http://localhost:$PORT_BE/api"
 
 function docker_deploy_help() {
@@ -19,19 +16,11 @@ function docker_deploy_help() {
     run_container_be: Accept 2 optional arguments to override the defaults ARG 1 container name 
     ARG 2  PORT number that the container will map to.
 
-    build_image_fe: accepts 2 optional arguments ARG 1 API_URL the url to reach backend service, 
-    ARG 2 imagename  to overide the default
+    delete_image: delete the image
 
-    run_container_fe: Accept 2 optional arguments, ARG 1 PORT to map to container port, 
-    ARG 2 CONTAINER_NAME to overide default container name.
-    If not provided, container will map to the same port that was used to build the image.
+    delete_container: delete the container. You can also specify -f to delete container if it is running.
 
-    delete_image: -fe | -be : specify which image to delete -fe for frontend, -be for backend
-
-    delete_container: -be | -fe : specify which container to delete -fe frontend, -be for backend.
-    You can also specify -f to delete container if it is running.
-
-    push_image:  -be | -fe : push docker image to repository
+    push_image: push docker image to repository
    """
 }
 
@@ -82,83 +71,19 @@ function run_container_be() {
 #   return "Please provide the url for API requests";
 # fi
 
-# Frontend
-function build_image_fe() {    
-  API_URL=$API_URL;
-  if [[ $# == 1 ]]; then
-    API_URL=$1;
-  fi
-
-  if [[ $# == 2 ]]; then
-    API_URL=$1;
-    IMAGE_NAME_FE=$2
-  fi
-
-  command="docker build  -t $IMAGE_NAME_FE:latest --build-arg API_URL=$API_URL -f dockerfile-frontend .";
-  echo Executing: $command;
-  $command
-}
-
-function run_container_fe () {
-  PORT_MAP=$PORT_FE
-  if [[ $# == 1 ]]; then
-    PORT_MAP=$1
-  fi
-
-  if [[ $# == 2 ]]; then
-    PORT_MAP=$1
-    CONTAINER_NAME_FE=$2
-  fi
-
-  # command="docker run -d --name $CONTAINER_NAME_FE -p $PORT_MAP:$PORT_FE $IMAGE_NAME_FE";
-  command="docker run -d --name $CONTAINER_NAME_FE -p $PORT_MAP:$PORT_FE --link todoapp-container-be:todoapp-container-be $IMAGE_NAME_FE";
-  echo Executing: $command;
-  $command
-}
-
-
-function push_image() {
-  if [ ! $1 ]; then
-    echo "Please specify which image to push. Use -be for backend image and -fe for frontend image"
-    return 1;
-  fi
-  if [[ $1 == '-be' ]]; then
-    IMAGE_NAME=$IMAGE_NAME_BE
-  elif [[ $1 == '-fe' ]]; then
-    IMAGE_NAME=$IMAGE_NAME_FE
-  fi
+function push_image_be() {
   command="docker push $IMAGE_NAME:latest";
   echo Executing: $command;
   $command
 }
 
-function delete_image () {
-  if [ ! $1 ]; then
-    echo "Please specify which image to delete. Use -be for backend image and -fe for frontend image"
-    return 1;
-  fi
-  if [[ $1 == '-be' ]]; then
-    IMAGE_NAME=$IMAGE_NAME_BE
-  elif [[ $1 == '-fe' ]]; then
-    IMAGE_NAME=$IMAGE_NAME_FE
-  fi
+function delete_image_be() {
   command="docker rmi $IMAGE_NAME";
   echo Executing: $command;
   $command
 }
 
-function delete_container() {
-  if [ ! $1 ]; then
-    echo "Please specify which container to delete. Use -be for backend container and -fe for frontend container"
-    return 1;
-  fi
-
-  if [[ $1 == '-be' ]]; then
-    CONTAINER_NAME=$CONTAINER_NAME_BE
-  elif [[ $1 == '-fe' ]]; then
-    CONTAINER_NAME=$CONTAINER_NAME_FE
-  fi
-
+function delete_container_be() {
   # Provide the -f flag to stop and delete container
   if [[ $2 == '-f' ]]; then
     command="docker container stop $CONTAINER_NAME";

@@ -24,14 +24,14 @@ spec:
       - name: check-db-service
         image: busybox
         # Wait for the database to be ready
-        command: ['sh', '-c', 'until nslookup todoapp-db-service; do echo Waiting for db service; sleep 3; done;']
+        command: ['sh', '-c', "until nslookup todoapp-db-service; do echo Waiting for db service; sleep 3; done;"]
       - name: create-db-todoapp
         # Create the database for the application to use
         # SQL is gotten from ConfigMap
         image: postgres
         command: ['bash', '-c', 'psql -U postgres -h todoapp-db-service -p 5432 < /sql-files/createdb.sql']
         volumeMounts:
-        - name: sql-volume
+        - name: {{ .Values.container.volumes.sql-volume }}
           mountPath: /sql-files
       containers:
       - name: {{ .Values.container.name }}
@@ -58,7 +58,6 @@ spec:
           periodSeconds: 5
         imagePullPolicy: IfNotPresent
       volumes:
-      - name: sql-volume
+      - name: {{ .Values.container.volumes.sql-volume }}
         configMap:
-          name: sql-config
-
+          name: {{ .Values.configMap.name }}

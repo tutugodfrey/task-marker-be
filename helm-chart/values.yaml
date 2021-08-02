@@ -1,15 +1,49 @@
 namespace:
   name: dev
 
-frondendDeploy:
-  image:
-    repository:
-    tag:
+deployment:
+  name: todoapp-be-deployment
   replicaCount: 1
 
-backendDeploy:
-  image:
-    repository: 
-    tag:
-  replicaCount: 1
+container:
+  name: todoapp-be-container
+  image: tutug/todoapp-be
+  tag: latest
+  containerPort: 3005
+  volumes:
+    sql-volume: sql-volume
 
+
+selector:
+  app: todoapp-be
+  run: db
+
+
+service:
+  name: todoapp-be-service
+  type: LoadBalancer
+  port: 3005
+  targetPort: 3005
+
+configMap:
+  name: sql-config
+
+db:
+  deployment:
+    name: todoapp-db-deployment
+    replicaCount: 1
+  container:
+    name: todoapp-db-container
+    imageRepository: postgres
+    imageTag: latest
+    containerPort: 5432
+  resources:
+    limits:
+      cpu: 500m
+      memory: 2Gi
+
+db_service:
+  name: todoapp-db-service
+  type: ClusterIP
+  port: 5432
+  targetPort: 5432
