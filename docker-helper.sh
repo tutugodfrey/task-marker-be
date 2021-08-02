@@ -1,7 +1,7 @@
 #! /bin/bash
 
-IMAGE_NAME_BE="tutug/todoapp-be"
-CONTAINER_NAME_BE=todo-container-be
+IMAGE_NAME_BE="tutug/task-marker-be"
+CONTAINER_NAME_BE=task-marker-container-be
 PORT_BE=3005
 API_URL="http://localhost:$PORT_BE/api"
 
@@ -38,11 +38,11 @@ function build_image_be() {
 
   JWT_SECRET=$1
   if [[ $# == 2 ]]; then 
-    PORT_BE=$2
+    PORT_BE=$1
   fi
 
   if [[ $# == 3 ]]; then 
-    PORT_BE=$2
+    PORT_BE=$1
     IMAGE_NAME_BE=$3
   fi
 
@@ -59,7 +59,7 @@ function run_container_be() {
 
   if [[ $# == 2 ]]; then
     CONTAINER_NAME_BE=$1
-    PORT_MAP=$2
+    PORT_MAP=$1
   fi
   command="docker run -d --name $CONTAINER_NAME_BE -p $PORT_MAP:$PORT_BE  $IMAGE_NAME_BE";
   echo Executing: $command;
@@ -72,29 +72,29 @@ function run_container_be() {
 # fi
 
 function push_image_be() {
-  command="docker push $IMAGE_NAME:latest";
+  command="docker push $IMAGE_NAME_BE:latest";
   echo Executing: $command;
   $command
 }
 
 function delete_image_be() {
-  command="docker rmi $IMAGE_NAME";
+  command="docker rmi $IMAGE_NAME_BE";
   echo Executing: $command;
   $command
 }
 
 function delete_container_be() {
   # Provide the -f flag to stop and delete container
-  if [[ $2 == '-f' ]]; then
-    command="docker container stop $CONTAINER_NAME";
+  if [[ $1 == '-f' ]]; then
+    command="docker container stop $CONTAINER_NAME_BE";
     echo Executing: $command;
     $command
 
-    command="docker container rm $CONTAINER_NAME";
+    command="docker container rm $CONTAINER_NAME_BE";
     echo Executing: $command;
     $command
   else
-    command="docker container rm $CONTAINER_NAME";
+    command="docker container rm $CONTAINER_NAME_BE";
     echo Executing: $command;
     $command
   fi
@@ -103,7 +103,7 @@ function delete_container_be() {
 echo Get help by providing the flags "-h" or "--help"
 
 ## Other useful commands
-#docker save tutug/todoapp-fe -o frontend-image
-#docker save tutug/todoapp-fe -o frontend-image
+#docker save tutug/task-marker-fe -o frontend-image
+#docker save tutug/task-marker-fe -o frontend-image
 #docker load -i frontend-image
 #docker load -i frontend-image
