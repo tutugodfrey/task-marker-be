@@ -28,10 +28,6 @@ My latest install version is `^86.0.0`. But I've changed the version in package.
 
 There are various options possible for deploying this application to testing, staging or production environment. Click any of the links below to see what is possible
 
-[Provision Datacenter on AWS and Deploy with Terraform IaC](tf-aws/README.md)
-
-[Deploy to Google Cloud](deploy-to-google-cloud/README.md)
-
 [Deployment with Docker](#Deployment-with-docker)
 
 [Deployment with Kubernetes](k8s/README.md)
