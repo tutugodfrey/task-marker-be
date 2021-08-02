@@ -24,8 +24,7 @@ RUN npm install --production
 COPY public/background-image.jpg ./public
 COPY src ./src
 COPY helpers ./helpers
-COPY setup ./setup
-COPY .babelrc jest.config.js /app/
+COPY .babelrc  /app/
 EXPOSE $PORT
 
 WORKDIR /modela
