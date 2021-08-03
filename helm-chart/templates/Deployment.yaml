@@ -58,6 +58,6 @@ spec:
           periodSeconds: 5
         imagePullPolicy: Always
       volumes:
-      - name: {{ .Values.container.volumes.sql-volume }}
+      - name: {{ .Values.container.volumes.sql_volume }}
         configMap:
           name: {{ .Values.configMap.name }}
