@@ -5,4 +5,4 @@ metadata:
   namespace: {{ .Values.namespace.name }}
 data: 
   createdb.sql:
-    CREATE DATABASE todoapp;
+    CREATE DATABASE {{ .Values.configMap.dbName }};
