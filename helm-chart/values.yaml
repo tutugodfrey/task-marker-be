@@ -8,7 +8,7 @@ deployment:
 container:
   name: task-marker-be-container
   image: tutug/task-marker-be
-  tag: 1095377312
+  tag: 1095485848
   containerPort: 3005
   volumes:
     sql_volume: sql-volume
