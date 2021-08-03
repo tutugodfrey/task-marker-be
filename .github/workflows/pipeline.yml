@@ -1,6 +1,10 @@
 name: test and build docker image
 
-on: [push]
+on:
+  push:
+    branches: [develop]
+  pull_request:
+    branches: [develop]
 
 jobs:
   build:
@@ -28,3 +32,21 @@ jobs:
         run: |
           npm link data-modela
           npm test
+
+  build_and_push_docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: build and push iamge
+        run: |
+          env
+          . ./docker-helper.sh
+          build_image_be ${{ secrets.JWT_SECRET }} ${{ github.run_id }}
+          push_image_be ${{ github.run_id }}

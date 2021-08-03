@@ -1,6 +1,7 @@
 #! /bin/bash
 
 IMAGE_NAME_BE="tutug/task-marker-be"
+TAG=latest
 CONTAINER_NAME_BE=task-marker-container-be
 PORT_BE=3005
 API_URL="http://localhost:$PORT_BE/api"
@@ -38,15 +39,15 @@ function build_image_be() {
 
   JWT_SECRET=$1
   if [[ $# == 2 ]]; then 
-    PORT_BE=$1
+    TAG=$2
   fi
 
   if [[ $# == 3 ]]; then 
-    PORT_BE=$1
+    TAG=$2
     IMAGE_NAME_BE=$3
   fi
 
-  command="docker build --build-arg JWT_SECRET=$JWT_SECRET --build-arg port=$PORT_BE -t $IMAGE_NAME_BE:latest .";
+  command="docker build --build-arg JWT_SECRET=$JWT_SECRET --build-arg port=$PORT_BE -t $IMAGE_NAME_BE:$TAG .";
   echo Executing $command;
   $command;
 }
@@ -72,7 +73,11 @@ function run_container_be() {
 # fi
 
 function push_image_be() {
-  command="docker push $IMAGE_NAME_BE:latest";
+  if [[ ! -z $1 ]]; then
+    TAG=$1
+  fi
+
+  command="docker push $IMAGE_NAME_BE:$TAG";
   echo Executing: $command;
   $command
 }
