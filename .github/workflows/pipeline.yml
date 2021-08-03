@@ -1,0 +1,30 @@
+name: test and build docker image
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+
+      - name: Install dependencies
+        run: |
+          npm install
+
+      - name: Link data-modela
+        run: |
+          cd ~/
+          git clone https://github.com/tutugodfrey/modela
+          cd modela
+          npm install
+          npm link
+      
+      - name: Run test
+        env:
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          PORT: ${{ secrets.PORT }}
+        run: |
+          npm link data-modela
+          npm test
