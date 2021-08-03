@@ -11,7 +11,7 @@ container:
   tag: 1095377312
   containerPort: 3005
   volumes:
-    sql-volume: sql-volume
+    sql_volume: sql-volume
 
 
 selector:

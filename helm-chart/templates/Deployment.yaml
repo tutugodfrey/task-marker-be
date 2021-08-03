@@ -31,7 +31,7 @@ spec:
         image: postgres
         command: ['bash', '-c', 'psql -U postgres -h task-marker-db-service -p 5432 < /sql-files/createdb.sql']
         volumeMounts:
-        - name: {{ .Values.container.volumes.sql-volume }}
+        - name: {{ .Values.container.volumes.sql_volume }}
           mountPath: /sql-files
       containers:
       - name: {{ .Values.container.name }}
