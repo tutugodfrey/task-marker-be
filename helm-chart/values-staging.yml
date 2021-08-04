@@ -1,5 +1,5 @@
 namespace:
-  name: prod
+  name: staging
 
 container:
   tag: "1092558638"

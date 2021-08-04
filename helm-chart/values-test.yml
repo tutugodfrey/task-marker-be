@@ -1,5 +1,5 @@
 namespace:
-  name: prod
+  name: test
 
 container:
   tag: "1092558638"
