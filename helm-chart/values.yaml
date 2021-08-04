@@ -8,7 +8,7 @@ deployment:
 container:
   name: task-marker-be-container
   image: tutug/task-marker-be
-  tag: 1092558638
+  tag: "1092558638"
   containerPort: 3005
   volumes:
     sql_volume: sql-volume
@@ -41,7 +41,7 @@ db:
     DB_URL: postgres://postgres:postgres@task-marker-db-service:5432/task_marker
   resources:
     limits:
-      cpu: 500m
+      cpu: 200m
       memory: 2Gi
 
 db_service:
