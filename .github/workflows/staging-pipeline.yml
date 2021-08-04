@@ -1,9 +1,7 @@
-name: test and build docker image
+name: test and build docker image for staging environment on develop branch
 
 on:
   push:
-    branches: [develop]
-  pull_request:
     branches: [develop]
 
 jobs:
@@ -50,5 +48,5 @@ jobs:
         run: |
           env
           . ./docker-helper.sh
-          build_image_be ${{ secrets.JWT_SECRET }} ${{ github.run_id }}
-          push_image_be ${{ github.run_id }}
+          build_image_be ${{ secrets.JWT_SECRET }} staging-${{ github.run_id }}
+          push_image_be staging-${{ github.run_id }}

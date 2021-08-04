@@ -1,0 +1,54 @@
+name: test and build docker image for test environment on test branch
+
+on:
+  push:
+    branches: [test]
+  pull_request:
+    branches: [test]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+
+      - name: Install dependencies
+        run: |
+          npm install
+
+      - name: Link data-modela
+        run: |
+          cd ~/
+          git clone https://github.com/tutugodfrey/modela
+          cd modela
+          npm install
+          npm link
+      
+      - name: Run test
+        env:
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          PORT: ${{ secrets.PORT }}
+        run: |
+          npm link data-modela
+          npm test
+
+  build_and_push_docker:
+    name: Build_Image
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: build and push iamge
+        run: |
+          env
+          . ./docker-helper.sh
+          build_image_be ${{ secrets.JWT_SECRET }} test-${{ github.run_id }}
+          push_image_be test-${{ github.run_id }}
