@@ -1,5 +1,5 @@
 namespace:
-  name: test
+  name: task-marker-test
 
 container:
   tag: "1092558638"

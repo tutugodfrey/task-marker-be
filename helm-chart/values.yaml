@@ -1,5 +1,5 @@
 namespace:
-  name: dev
+  name: task-marker-dev
 
 deployment:
   name: task-marker-be-deployment
@@ -8,7 +8,7 @@ deployment:
 container:
   name: task-marker-be-container
   image: tutug/task-marker-be
-  tag: "1092558638"
+  tag: "dev-1201458989"
   containerPort: 3005
   volumes:
     sql_volume: sql-volume
