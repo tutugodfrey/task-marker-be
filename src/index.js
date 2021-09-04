@@ -21,6 +21,7 @@ app.get('/metrics', async (req, res) => {
   const metrics = await promClient.register.metrics();
   res.set('Content-Type', promClient.register.contentType);
   return res.json({ metrics });
+
 });
 
 // important to keep catch-all route last
