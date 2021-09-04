@@ -1,5 +1,5 @@
 namespace:
-  name: prod
+  name: task-marker-prod
 
 container:
   tag: "1092558638"
