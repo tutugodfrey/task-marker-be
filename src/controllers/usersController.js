@@ -1,9 +1,10 @@
 import { users } from '../model';
 import bcrypt from 'bcryptjs';
-import { genToken } from '../helpers'
+import { genToken, histogram, counter } from '../helpers';
 
 class UsersController  {
   static signUp(req, res)  {
+    const start = new Date().valueOf();
     const saltRounds = 10;
     const { password } = req.body;
     const salt = bcrypt.genSaltSync(saltRounds);
@@ -21,6 +22,9 @@ class UsersController  {
           email,
           username,
         });
+        const end = new Date().valueOf() - start;
+        histogram.observe(end/1000);
+        counter.inc();
         return res.status(201).json({
           id,
           name,
@@ -34,6 +38,7 @@ class UsersController  {
   };
 
   static signIn(req, res) {
+    const start = new Date().valueOf();
     // user with username and password
     const { username, password } = req.body;
     return users
@@ -61,6 +66,9 @@ class UsersController  {
             token
           })
         }
+        const end = new Date().valueOf() - start;
+        histogram.observe(end/1000);
+        counter.inc();
         return res.status(404).json({ message: 'user not found' });
       })
       .catch(err => {
@@ -72,6 +80,7 @@ class UsersController  {
   }
 
   static updateUser(req, res) {
+    const start = new Date().valueOf();
     let { userId } = req.body;
     const update = { ...req.body };
     delete update.userId;
@@ -87,12 +96,16 @@ class UsersController  {
       .then(user => {
         const user_ = { ...user }
         delete user_.password;
+        const end = new Date().valueOf() - start;
+        histogram.observe(end/1000);
+        counter.inc();
         return res.status(200).json(user_)
       })
       .catch(err => res.status(500).json(err))
   }
 
   static getUsers(req, res) {
+    const start = new Date().valueOf();
     return users
       .findById(req.body.userId)
       .then(result => {
@@ -107,6 +120,9 @@ class UsersController  {
               delete user.password
               return user
             })
+            const end = new Date().valueOf() - start;
+            histogram.observe(end/1000);
+            counter.inc();
             return res.status(200).json(result)
           })
       })
@@ -114,24 +130,32 @@ class UsersController  {
   }
 
   static getUser(req, res) {
+    const start = new Date().valueOf();
     let { userId } = req.body;
     return users
     .findById(userId)
     .then(user => {
       const retrievedUser = { ...user }
       delete retrievedUser.password;
+      const end = new Date().valueOf() - start;
+      histogram.observe(end/1000);
+      counter.inc();
       return res.status(200).json(retrievedUser);
     })
     .catch(error => res.status(500).json(error))
   }
 
   static deleteUser(req, res) {
+    const start = new Date().valueOf();
     let { id } = req.params;
     return users
       .destory({
         id,
       })
       .then(res => {
+        const end = new Date().valueOf() - start;
+        histogram.observe(end/1000);
+        counter.inc();
         return res.status(200).json({
           message: 'user successfully deleted'
         });
@@ -144,6 +168,7 @@ class UsersController  {
   }
 
   static uploadPhoto(req, res) {
+    const start = new Date().valueOf();
     const { profilePhoto, userId } = req.body;
     return users
     .update(
@@ -159,6 +184,9 @@ class UsersController  {
     .then(user => {
       const user_ = { ...user }
       delete user_.password;
+      const end = new Date().valueOf() - start;
+      histogram.observe(end/1000);
+      counter.inc();
       return res.status(200).json(user_)
     })
     .catch(err => res.status(500).json(err))

@@ -1,7 +1,9 @@
 import { users, todos } from '../model';
+import { histogram, counter } from '../helpers'
 
 class TodoController {
   static createTodo(req, res) {
+    const start = new Date().valueOf();
     const todo = req.body;
     todo.completed = false;
     if (todo.deadline !== undefined && todo.deadline === 0) {
@@ -14,26 +16,42 @@ class TodoController {
         return todos
         .create(todo)
         .then(todo => {
+          const end = new Date().valueOf() - start;
+          histogram.observe(end/1000);
+          counter.inc();
           return res.status(201).json(todo);
         })
       })
-      .catch(err => res.status(500).json(err.message))
+      .catch(err => {
+        const end = new Date().valueOf() - start;
+        histogram.observe(end/1000);
+        counter.inc();
+        return res.status(500).json(err.message)
+      })
   }
 
   static getTodo(req, res) {
+    const start = new Date().valueOf();
     let { id } = req.params;
     id = parseInt(id, 10)
     return todos
       .findById(id)
       .then(todo => {
+        const end = new Date().valueOf() - start;
+        histogram.observe(end/1000);
+        counter.inc();
         return res.status(200).json(todo);
       })
       .catch(err => {
+        const end = new Date().valueOf() - start;
+        histogram.observe(end/1000);
+        counter.inc();
         return res.status(500).json(err)
       })
   }
 
   static getTodos(req, res) {
+    const start = new Date().valueOf();
     const { userId } = req.body;
     return todos
       .findAll({
@@ -41,11 +59,22 @@ class TodoController {
           userId,
         }
       })
-      .then(todo => res.status(200).json(todo))
-      .catch(err => res.status(500).json(err));
+      .then(todo => {
+        const end = new Date().valueOf() - start;
+        histogram.observe(end/1000);
+        counter.inc();
+        return res.status(200).json(todo)
+      })
+      .catch(err => {
+        const end = new Date().valueOf() - start;
+        histogram.observe(end/1000);
+        counter.inc();
+        return res.status(500).json(err)
+      });
   }
 
   static  updateTodo(req, res) {
+    const start = new Date().valueOf();
     let { id } = req.params;
     id = parseInt(id, 10);
     const updates = req.body;
@@ -76,7 +105,12 @@ class TodoController {
           },
         )
       })
-      .then(todo => res.status(200).json(todo))
+      .then(todo => {
+        const end = new Date().valueOf() - start;
+        histogram.observe(end/1000);
+        counter.inc();
+        return res.status(200).json(todo)
+      })
       .catch(err => {
         if (err.message && err.message === 'todo not found')
           return res.status(404).json(err);
@@ -85,6 +119,7 @@ class TodoController {
   }
 
   static deleteTodo(req, res) {
+    const start = new Date().valueOf();
     let { id } = req.params;
     id = parseInt(id, 10);
     const { userId } = req.body;
@@ -99,10 +134,16 @@ class TodoController {
           }
         })
         .then(result => {
+          const end = new Date().valueOf() - start;
+          histogram.observe(end/1000);
+          counter.inc();
           return res.status(200).json(result)
         })
       })
       .catch(err => {
+        const end = new Date().valueOf() - start;
+        histogram.observe(end/1000);
+        counter.inc();
         if (err.message && err.message === 'todo not found, not action taken')
           return res.status(404).json(err)
         return res.status(500).json(err)

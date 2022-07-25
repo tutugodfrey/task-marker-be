@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv-safe';
+import * as Prometheus from "prom-client";
 
 dotenv.config()
 const { JWT_SECRET } = process.env;
@@ -26,11 +27,32 @@ const authUser = async (req, res, next) => {
     return next()
   } catch(err) {
     // err
-    return res.status(401).json({ message: 'invalid token'})
+    return res.status(401).json({ message: 'invalid token' })
   }
 }
+
+// Collect prometheus metrics
+const collectDefaultMetrics = Prometheus.collectDefaultMetrics;
+const Registry = Prometheus.Registry;
+const registry = new Registry();
+const metrics = collectDefaultMetrics({ registry });
+
+const counter = new Prometheus.Counter({
+  name: 'node_request_operations_total',
+  help: 'The total number of requests received'
+});
+
+const histogram = new Prometheus.Histogram({
+  name: 'node_request_duration_seconds',
+  help: 'Histogram for duration of requests in seconds',
+  buckets: [1, 2, ,3 ,4 ,5, ,6],
+  // labelNames: [ 'path', 'status' ]
+});
 
 export {
   genToken,
   authUser,
+  counter,
+  histogram,
+  Prometheus
 }

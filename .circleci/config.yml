@@ -79,4 +79,4 @@ jobs:
           command: |
             . /docker-helper.sh
             push-image-fe
-  build_frontend_image:
+
