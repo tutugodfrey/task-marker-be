@@ -19,8 +19,8 @@ app.get('/metrics', async (req, res) => {
 });
 
 // important to keep catch-all route last
-app.get('/*', (req, res) => {
-  res.status(200).sendFile('index.html', { root: './public' });
-});
+// app.get('/*', (req, res) => {
+//   res.status(200).sendFile('index.html', { root: './public' });
+// });
 
 export default app;
