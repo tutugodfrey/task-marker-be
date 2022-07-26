@@ -16,17 +16,17 @@ class TodoController {
         return todos
         .create(todo)
         .then(todo => {
+          res.status(201).json(todo);
           const end = new Date().valueOf() - start;
-          histogram.observe(end/1000);
-          counter.inc();
-          return res.status(201).json(todo);
+          histogram.labels({method: req.method, path: req.path, status: res.statusCode, message: res.statusMessage}).observe(end/1000);
+          return counter.inc();
         })
       })
       .catch(err => {
+        res.status(500).json(err.message)
         const end = new Date().valueOf() - start;
-        histogram.observe(end/1000);
-        counter.inc();
-        return res.status(500).json(err.message)
+        histogram.labels({method: req.method, path: req.path, status: res.statusCode, message: res.statusMessage}).observe(end/1000);
+        return counter.inc();
       })
   }
 
@@ -38,15 +38,15 @@ class TodoController {
       .findById(id)
       .then(todo => {
         const end = new Date().valueOf() - start;
-        histogram.observe(end/1000);
+        histogram.labels({method: req.method, path: req.path, status: res.statusCode, message: res.statusMessage}).observe(end/1000);
         counter.inc();
         return res.status(200).json(todo);
       })
       .catch(err => {
+        res.status(500).json(err)
         const end = new Date().valueOf() - start;
-        histogram.observe(end/1000);
-        counter.inc();
-        return res.status(500).json(err)
+        histogram.labels({method: req.method, path: req.path, status: res.statusCode, message: res.statusMessage}).observe(end/1000);
+        return counter.inc();
       })
   }
 
@@ -60,16 +60,16 @@ class TodoController {
         }
       })
       .then(todo => {
+        res.status(200).json(todo)
         const end = new Date().valueOf() - start;
-        histogram.observe(end/1000);
-        counter.inc();
-        return res.status(200).json(todo)
+        histogram.labels({method: req.method, path: req.path, status: res.statusCode, message: res.statusMessage}).observe(end/1000);
+        return counter.inc();
       })
       .catch(err => {
+        res.status(500).json(err)
         const end = new Date().valueOf() - start;
-        histogram.observe(end/1000);
-        counter.inc();
-        return res.status(500).json(err)
+        histogram.labels({method: req.method, path: req.path, status: res.statusCode, message: res.statusMessage}).observe(end/1000);
+        return counter.inc();
       });
   }
 
@@ -106,15 +106,22 @@ class TodoController {
         )
       })
       .then(todo => {
+        res.status(200).json(todo)
         const end = new Date().valueOf() - start;
-        histogram.observe(end/1000);
-        counter.inc();
-        return res.status(200).json(todo)
+        histogram.labels({method: req.method, path: req.path, status: res.statusCode, message: res.statusMessage}).observe(end/1000);
+        return counter.inc();
       })
       .catch(err => {
-        if (err.message && err.message === 'todo not found')
-          return res.status(404).json(err);
-        return res.status(500).json(err)
+        if (err.message && err.message === 'todo not found'){
+          res.status(404).json(err);
+          const end = new Date().valueOf() - start;
+          histogram.labels({method: req.method, path: req.path, status: res.statusCode, message: res.statusMessage}).observe(end/1000);
+          return counter.inc();
+        }
+        res.status(500).json(err)
+        const end = new Date().valueOf() - start;
+        histogram.labels({method: req.method, path: req.path, status: res.statusCode, message: res.statusMessage}).observe(end/1000);
+        return counter.inc();
       });
   }
 
@@ -134,19 +141,23 @@ class TodoController {
           }
         })
         .then(result => {
+          res.status(200).json(result)
           const end = new Date().valueOf() - start;
-          histogram.observe(end/1000);
-          counter.inc();
-          return res.status(200).json(result)
+          histogram.labels({method: req.method, path: req.path, status: res.statusCode, message: res.statusMessage}).observe(end/1000);
+          return counter.inc();
         })
       })
       .catch(err => {
+        if (err.message && err.message === 'todo not found, not action taken') {
+          res.status(404).json(err)
+          const end = new Date().valueOf() - start;
+          histogram.labels({method: req.method, path: req.path, status: res.statusCode, message: res.statusMessage}).observe(end/1000);
+          return counter.inc();
+        }
+        res.status(500).json(err)
         const end = new Date().valueOf() - start;
-        histogram.observe(end/1000);
-        counter.inc();
-        if (err.message && err.message === 'todo not found, not action taken')
-          return res.status(404).json(err)
-        return res.status(500).json(err)
+        histogram.labels({method: req.method, path: req.path, status: res.statusCode, message: res.statusMessage}).observe(end/1000);
+        return counter.inc();
       })
   }
 }

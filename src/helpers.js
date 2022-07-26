@@ -45,8 +45,8 @@ const counter = new Prometheus.Counter({
 const histogram = new Prometheus.Histogram({
   name: 'node_request_duration_seconds',
   help: 'Histogram for duration of requests in seconds',
-  buckets: [1, 2, ,3 ,4 ,5, ,6],
-  // labelNames: [ 'path', 'status' ]
+  buckets: [1, 2, 3, 4, 5, 6],
+  labelNames: [ 'method', 'path', 'status', 'message' ]
 });
 
 export {
