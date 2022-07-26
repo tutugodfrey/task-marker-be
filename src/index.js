@@ -14,8 +14,7 @@ app.use('/api', router)
 app.get('/metrics', async (req, res) => {
   const metrics = await Prometheus.register.metrics();
   res.set('Content-Type', Prometheus.register.contentType);
-  return res.json({ metrics });
-
+  return res.send(metrics);
 });
 
 // important to keep catch-all route last
