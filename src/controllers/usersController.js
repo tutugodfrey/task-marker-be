@@ -1,9 +1,10 @@
 import { users } from '../model';
 import bcrypt from 'bcryptjs';
-import { genToken } from '../helpers'
+import { genToken, histogram, counter } from '../helpers';
 
 class UsersController  {
   static signUp(req, res)  {
+    const start = new Date().valueOf();
     const saltRounds = 10;
     const { password } = req.body;
     const salt = bcrypt.genSaltSync(saltRounds);
@@ -21,7 +22,8 @@ class UsersController  {
           email,
           username,
         });
-        return res.status(201).json({
+
+        res.status(201).json({
           id,
           name,
           email,
@@ -29,11 +31,20 @@ class UsersController  {
           token,
           imgUrl,
         });
+        const end = new Date().valueOf() - start;
+        histogram.labels({method: req.method, path: req.path, status: res.statusCode, message: res.statusMessage}).observe(end/1000);
+        counter.inc();
       })
-      .catch(err => res.status(500).send(err));
+      .catch(err => {
+        res.status(500).send(err)
+        const end = new Date().valueOf() - start;
+        histogram.labels({method: req.method, path: req.path, status: res.statusCode, message: res.statusMessage}).observe(end/1000);
+        counter.inc();
+      });
   };
 
   static signIn(req, res) {
+    const start = new Date().valueOf();
     // user with username and password
     const { username, password } = req.body;
     return users
@@ -52,7 +63,7 @@ class UsersController  {
             username,
             email,
           })
-          return res.status(200).json({
+          res.status(200).json({
             id,
             name,
             username,
@@ -60,18 +71,31 @@ class UsersController  {
             imgUrl,
             token
           })
+          const end = new Date().valueOf() - start;
+          histogram.labels({method: req.method, path: req.path, status: res.statusCode, message: res.statusMessage}).observe(end/1000);
+          return counter.inc();
         }
-        return res.status(404).json({ message: 'user not found' });
+        res.status(404).json({ message: 'user not found' });
+        const end = new Date().valueOf() - start;
+        histogram.labels({method: req.method, path: req.path, status: res.statusCode, message: res.statusMessage}).observe(end/1000);
+        return counter.inc();
       })
       .catch(err => {
         if(err.message && err.message === 'user not found') {
-          return res.status(404).send(err)
+          res.status(404).send(err)
+          const end = new Date().valueOf() - start;
+          histogram.labels({method: req.method, path: req.path, status: res.statusCode, message: res.statusMessage}).observe(end/1000);
+          return counter.inc();
         };
-        return res.status(500).send(err);
+        res.status(500).send(err);
+        const end = new Date().valueOf() - start;
+        histogram.labels({method: req.method, path: req.path, status: res.statusCode, message: res.statusMessage}).observe(end/1000);
+        return counter.inc();
       });
   }
 
   static updateUser(req, res) {
+    const start = new Date().valueOf();
     let { userId } = req.body;
     const update = { ...req.body };
     delete update.userId;
@@ -87,12 +111,16 @@ class UsersController  {
       .then(user => {
         const user_ = { ...user }
         delete user_.password;
-        return res.status(200).json(user_)
+        res.status(200).json(user_)
+        const end = new Date().valueOf() - start;
+        histogram.labels({method: req.method, path: req.path, status: res.statusCode, message: res.statusMessage}).observe(end/1000);
+        return counter.inc();
       })
       .catch(err => res.status(500).json(err))
   }
 
   static getUsers(req, res) {
+    const start = new Date().valueOf();
     return users
       .findById(req.body.userId)
       .then(result => {
@@ -107,43 +135,67 @@ class UsersController  {
               delete user.password
               return user
             })
-            return res.status(200).json(result)
+            res.status(200).json(result)
+            const end = new Date().valueOf() - start;
+            histogram.labels({method: req.method, path: req.path, status: res.statusCode, message: res.statusMessage}).observe(end/1000);
+            return counter.inc();
           })
       })
       .catch(error => res.status(500).json(error))
   }
 
   static getUser(req, res) {
+    const start = new Date().valueOf();
     let { userId } = req.body;
     return users
     .findById(userId)
     .then(user => {
       const retrievedUser = { ...user }
       delete retrievedUser.password;
-      return res.status(200).json(retrievedUser);
+      res.status(200).json(retrievedUser);
+      const end = new Date().valueOf() - start;
+      histogram.labels({method: req.method, path: req.path, status: res.statusCode, message: res.statusMessage}).observe(end/1000);
+      return counter.inc();
     })
-    .catch(error => res.status(500).json(error))
+    .catch(error => {
+      res.status(500).json(error)
+      const end = new Date().valueOf() - start;
+      histogram.labels({method: req.method, path: req.path, status: res.statusCode, message: res.statusMessage}).observe(end/1000);
+      return counter.inc();
+    })
   }
 
   static deleteUser(req, res) {
+    const start = new Date().valueOf();
     let { id } = req.params;
     return users
       .destory({
         id,
       })
       .then(res => {
-        return res.status(200).json({
+        res.status(200).json({
           message: 'user successfully deleted'
         });
+        const end = new Date().valueOf() - start;
+        histogram.labels({method: req.method, path: req.path, status: res.statusCode, message: res.statusMessage}).observe(end/1000);
+        return counter.inc();
       })
       .catch(err => {
-        if (err.message && err.message === 'user not found')
-          return res.status(404).json(err);
-        return res.status(500).json(err)
+        if (err.message && err.message === 'user not found') {
+          res.status(404).json(err);
+          const end = new Date().valueOf() - start;
+          histogram.labels({method: req.method, path: req.path, status: res.statusCode, message: res.statusMessage}).observe(end/1000);
+          return counter.inc();
+        }
+        res.status(500).json(err)
+        const end = new Date().valueOf() - start;
+        histogram.labels({method: req.method, path: req.path, status: res.statusCode, message: res.statusMessage}).observe(end/1000);
+        return counter.inc();
       })
   }
 
   static uploadPhoto(req, res) {
+    const start = new Date().valueOf();
     const { profilePhoto, userId } = req.body;
     return users
     .update(
@@ -159,9 +211,17 @@ class UsersController  {
     .then(user => {
       const user_ = { ...user }
       delete user_.password;
-      return res.status(200).json(user_)
+      res.status(200).json(user_)
+      const end = new Date().valueOf() - start;
+      histogram.labels({method: req.method, path: req.path, status: res.statusCode, message: res.statusMessage}).observe(end/1000);
+      return counter.inc();
     })
-    .catch(err => res.status(500).json(err))
+    .catch(err => {
+      res.status(500).json(err)
+      const end = new Date().valueOf() - start;
+      histogram.labels({method: req.method, path: req.path, status: res.statusCode, message: res.statusMessage}).observe(end/1000);
+      return counter.inc();
+    })
   }
 }
 

@@ -2,15 +2,19 @@ import express from 'express';
 import UsersController from '../controllers/usersController';
 import TodoController from '../controllers/todoController';
 import { authValidator, todoValidator } from '../middlewares/validation';
-import { authUser } from '../helpers'
+import { authUser, histogram, counter  } from '../helpers'
 import upload, { handleUploadedImage } from '../middlewares/fileupload';
 
 const router = express.Router();
 
 // default route return a nice welcome message
 router.get('/', (req, res) => {
+  const start = new Date().valueOf();
   res.status(200).send({ message:
     'Welcome to Todo-er! Get your task completed like breeze.' });
+  const end = new Date().valueOf() - start;
+  histogram.labels({method: req.method, path: req.path, status: res.statusCode, message: res.statusMessage}).observe(end/1000)
+  return counter.inc();
 });
 
 // create new user
