@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Values.deployment.name }}
-  namespace: {{ .Values.namespace.name }}
+  namespace: {{ .Values.namespace }}
   labels:
     app: {{ .Values.selector.app }}
 spec:
@@ -24,7 +24,7 @@ spec:
       - name: check-db-service
         image: busybox
         # Wait for the database to be ready
-        command: ['sh', '-c', "until nslookup task-marker-db-service; do echo Waiting for db service; sleep 3; done;"]
+        command: ['sh', '-c', "until nslookup task-marker-db-service.{{ .Values.namespace }}.svc.cluster.local; do echo Waiting for db service; sleep 3; done;"]
       - name: create-db-task-marker
         # Create the database for the application to use
         # SQL is gotten from ConfigMap

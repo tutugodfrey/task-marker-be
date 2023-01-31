@@ -1,5 +1,4 @@
-namespace:
-  name: task-marker-dev
+namespace: task-marker-dev
 
 deployment:
   name: task-marker-be-deployment
