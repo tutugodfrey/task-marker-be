@@ -1,0 +1,71 @@
+IMAGE          CREATED         CREATED BY                                      SIZE      COMMENT
+#(nop)  ENTRYPOINT [""]              
+yum install git -y                   359
+mv kubeval /usr/local/bin            7.42
+tar xf kubeval-linux-amd64.tar.gz    7.42
+curl -fL -o kubeval-linux-amd64.t…   2.88
+amazon-linux-extras install docker   582
+mv ./yq /usr/local/bin               6.93
+chmod +x ./yq                        6.93
+curl -L -o yq "https://github.com…   6.93
+mv ./ytt  /usr/local/bin             13.4
+chmod +x ./ytt                       13.4
+curl -L -o ytt "https://github.co…   13.4
+install skaffold /usr/local/bin/     
+curl -Lo skaffold https://storage…   
+mv kubectl /usr/local/bin           
+chmod +x kubectl                     
+curl -sLO "https://dl.k8s.io/rele…   
+echo "using kubectl@$(curl -Ls ht…   
+mvn --version                        
+yum install -y apache-maven -y       
+sed -i s/\$releasever/6/g /etc/yu…   
+wget https://repos.fedorapeople.o…   
+yum install wget -y                  
+yum update -y                        
+set -eux;   arch="$(objdump="$(co… 
+#(nop)  ENV JAVA_VERSION=11.0.12     
+#(nop)  ENV LANG=en_US.UTF-8         
+#(nop)  ENV PATH=/usr/java/openjd…   
+#(nop)  ENV JAVA_HOME=/usr/java/o…   
+set -eux;  yum install -y   gzip …   
+#(nop)  ENTRYPOINT ["/usr/local/b…   
+#(nop) WORKDIR /aws                  
+#(nop) COPY dir:afcc8171cb9bef3bc…  
+#(nop) COPY dir:cd7193dbce4ff0c5b…   
+yum update -y   && yum install -y…   
+#(nop)  CMD ["/bin/bash"]            
+#(nop) ADD file:21dc1ad70daefae1c… 
+
+
+yum install git -y
+mv kubeval /usr/local/bin
+tar xf kubeval-linux-amd64.tar.gz
+curl -fL -o kubeval-linux-amd64.tar.gz https://github.com/instrumenta/kubeval/releases/latest/download/kubeval-linux-amd64.tar.gz
+amazon-linux-extras install docker
+mv ./yq /usr/local/bin
+chmod +x ./yq
+curl -L -o yq "https://github.com/mikefarah/yq/releases/download/v4.2.0/yq_linux_amd64"
+mv ./ytt  /usr/local/bin
+chmod +x ./ytt
+curl -L -o ytt "https://github.com/vmware-tanzu/carvel-ytt/releases/download/v0.37.0/ytt-linux-amd64"
+install skaffold /usr/local/bin/
+curl -Lo skaffold https://storage.googleapis.com/skaffold/releases/latest/skaffold-linux-amd64
+mv kubectl /usr/local/bin
+chmod +x kubectl
+curl -sLO "https://dl.k8s.io/release/$(curl -Ls https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" -o kubectl
+echo "using kubectl@$(curl -Ls https://dl.k8s.io/release/stable.txt)"
+yum install -y apache-maven -y
+sed -i s/\$releasever/6/g /etc/yum.repos.d/epel-apache-maven.repo
+wget https://repos.fedorapeople.org/repos/dchen/apache-maven/epel-apache-maven.repo -O /etc/yum.repos.d/epel-apache-maven.repo
+yum install wget -y
+yum update -y 
+
+set -eux;   arch="$(objdump="$(command -v objdump)" && objdump --file-headers "$objdump" | awk -F '[:,]+[[:space:]]+' '$1 == "architecture" { print $2 }')";  case "$arch" in   'i386:x86-64')    downloadUrl='https://github.com/AdoptOpenJDK/openjdk11-upstream-binaries/releases/download/jdk-11.0.12%2B7/OpenJDK11U-jdk_x64_linux_11.0.12_7.tar.gz';    ;;   'aarch64')    downloadUrl='https://github.com/AdoptOpenJDK/openjdk11-upstream-binaries/releases/download/jdk-11.0.12%2B7/OpenJDK11U-jdk_aarch64_linux_11.0.12_7.tar.gz';    ;;   *) echo >&2 "error: unsupported architecture: '$arch'"; exit 1 ;;  esac;   curl -fL -o openjdk.tgz "$downloadUrl";  curl -fL -o openjdk.tgz.asc "$downloadUrl.sign";   export GNUPGHOME="$(mktemp -d)";  gpg --batch --keyserver keyserver.ubuntu.com --recv-keys EAC843EBD3EFDB98CC772FADA5CD6035332FA671;  gpg --batch --keyserver keyserver.ubuntu.com --keyserver-options no-self-sigs-only --recv-keys CA5F11C6CE22644D42C6AC4492EF8D39DC13168F;  gpg --batch --list-sigs --keyid-format 0xLONG CA5F11C6CE22644D42C6AC4492EF8D39DC13168F   | tee /dev/stderr   | grep '0xA5CD6035332FA671'   | grep 'Andrew Haley';  gpg --batch --verify openjdk.tgz.asc openjdk.tgz;  rm -rf "$GNUPGHOME";   mkdir -p "$JAVA_HOME";  tar --extract   --file openjdk.tgz   --directory "$JAVA_HOME"   --strip-components 1   --no-same-owner  ;  rm openjdk.tgz*;   rm -rf "$JAVA_HOME/lib/security/cacerts";  ln -sT /etc/pki/ca-trust/extracted/java/cacerts "$JAVA_HOME/lib/security/cacerts";   ln -sfT "$JAVA_HOME" /usr/java/default;  ln -sfT "$JAVA_HOME" /usr/java/latest;  for bin in "$JAVA_HOME/bin/"*; do   base="$(basename "$bin")";   [ ! -e "/usr/bin/$base" ];   alternatives --install "/usr/bin/$base" "$base" "$bin" 20000;  done;   java -Xshare:dump;   fileEncoding="$(echo 'System.out.println(System.getProperty("file.encoding"))' | jshell -s -)"; [ "$fileEncoding" = 'UTF-8' ]; rm -rf ~/.java;  javac --version;  java --version
+ENV JAVA_VERSION=11.0.12
+ENV LANG=en_US.UTF-8
+ENV PATH=/usr/java/openjdk-11/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ENV JAVA_HOME=/usr/java/openjdk-11
+set -eux;  yum install -y   gzip   tar     binutils   freetype fontconfig  ;  rm -rf /var/cache/yum
+ENTRYPOINT ["/usr/local/bin/aws"]
+WORKDIR /aws
