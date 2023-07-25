@@ -7,16 +7,14 @@ deployment:
 container:
   name: task-marker-be-container
   image: tutug/task-marker-be
-  tag: "dev-1201458989"
+  tag: "dev-5651642839"
   containerPort: 3005
   volumes:
     sql_volume: sql-volume
 
-
 selector:
   app: task-marker-be
   run: db
-
 
 service:
   name: task-marker-be-service
