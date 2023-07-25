@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import router from './routes/index';
 import promClient from 'prom-client';
 import cors from 'cors';
+import path from 'path';
 
 const app = express();
 app.use(cors());

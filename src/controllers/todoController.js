@@ -17,7 +17,12 @@ class TodoController {
           return res.status(201).json(todo);
         })
       })
-      .catch(err => res.status(500).json(err.message))
+      .catch(err => {
+        if (err.message === 'user not found') {
+          return res.status(404).json({ message: err.message })
+        }
+        return res.status(500).json(err.message)
+      })
   }
 
   static getTodo(req, res) {
@@ -50,12 +55,17 @@ class TodoController {
     id = parseInt(id, 10);
     const updates = req.body;
     delete updates.userId;
+    let completed = {}
+    if (updates.completed !== undefined) {
+      completed.completed = updates.completed
+    }
+
     return todos.findById(id)
       .then(todo => {
         const update = {
+          ...completed,
           title: updates.title || todo.title,
           description: updates.description || todo.description,
-          completed: updates.completed || todo.completed,
           links: updates.links || todo.links,
           deadline: updates.deadline || todo.deadline,
         }
