@@ -10,6 +10,7 @@ class UsersController  {
     const hash = bcrypt.hashSync(password, salt);
     req.body.password = hash;
     delete req.body.confirmPassword;
+
     req.body.imgUrl = req.body.imgUrl || ''
     return users
       .create(req.body)
