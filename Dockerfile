@@ -7,6 +7,7 @@ LABEL description="Docker image for todo app backend"
  
 RUN git clone http://github.com/tutugodfrey/modela
 WORKDIR /app
+RUN mkdir -p public/profilePhotos
 COPY package*.json /app/
 RUN npm install
 
