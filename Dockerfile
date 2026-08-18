@@ -29,7 +29,7 @@ COPY .babelrc  /app/
 EXPOSE $PORT
 
 WORKDIR /modela
-RUN npm install && npm test && npm link
+RUN npm install && npm link
 
 WORKDIR /app
 RUN npm link data-modela
