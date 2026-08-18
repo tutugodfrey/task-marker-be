@@ -1,9 +1,9 @@
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 
-import app from '../index';
-import { testUsers, requestHelper } from '../../helpers'
-import { users, todos } from '../model';
+import app from '../index.js';
+import { testUsers, requestHelper } from '../../helpers/index.js'
+import { users, todos } from '../model/index.js';
 
 chai.use(chaiHttp);
 const { expect } = chai;
@@ -47,7 +47,7 @@ describe('User Test', () => {
       return postRequest(signUpRoute, user)
       .then(res => {
         expect(res.status).to.equal(400)
-        expect(res.body).to.have.property('message')
+        expect(res.body[0]).to.have.property('message')
           .to.equal('password is required to sign up');
       });
     });
@@ -59,7 +59,7 @@ describe('User Test', () => {
       return postRequest(signUpRoute, user)
       .then(res => {
         expect(res.status).to.equal(400)
-        expect(res.body).to.have.property('message')
+        expect(res.body[0]).to.have.property('message')
           .to.equal('confirmPassword is required to sign up');
       });
     });
@@ -82,7 +82,7 @@ describe('User Test', () => {
       return postRequest(signUpRoute, user)
         .then((res) => {
           expect(res.status).to.equal(400);
-          expect(res.body).to.have.property('message').to.equal('name is required to sign up');
+          expect(res.body[0]).to.have.property('message').to.equal('name is required to sign up');
         });
     });
 
@@ -92,7 +92,7 @@ describe('User Test', () => {
       return postRequest(signUpRoute, user)
         .then(res => {
           expect(res.status).to.equal(400)
-          expect(res.body).to.have.property('message')
+          expect(res.body[0]).to.have.property('message')
             .to.equal('email is required to sign up');
         });
     });
@@ -103,7 +103,7 @@ describe('User Test', () => {
       return postRequest(signUpRoute, user)
         .then(res => {
           expect(res.status).to.equal(400);
-          expect(res.body).to.have.property('message')
+          expect(res.body[0]).to.have.property('message')
             .to.equal('username is required to sign up');
         });
     });
