@@ -1,8 +1,9 @@
-import DataModela from 'data-modela';
-import { connect } from 'data-modela'; // will uncomment when data-modela is update with connect function
+import DataModela, { connect } from 'data-modela';
 import dotenv from 'dotenv-safe';
+
+console.log(DataModela)
 dotenv.config()
-const users = new DataModela('users', {
+const users = new DataModela.default('users', {
   id: {},
   name: {
     required: true,
@@ -43,7 +44,7 @@ const users = new DataModela('users', {
   },
 });
 
-const todos = new DataModela('todos', {
+const todos = new DataModela.default('todos', {
   id: {},
   title: {
     dateType: 'varchar',
@@ -91,7 +92,7 @@ NODE_ENV = NODE_ENV || 'prod';
 
 if (parseInt(process.env.USE_DB)) {
   const DATABASE_URL = process.env[dbEnvMap[NODE_ENV]]
-  const connection = connect(DATABASE_URL, [ users, todos ]);
+  const connection = DataModela.connect(DATABASE_URL, [ users, todos ]);
 }
 
 export {

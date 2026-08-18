@@ -1,4 +1,4 @@
-import { users, todos } from '../model';
+import { users, todos } from '../model/index.js';
 
 class TodoController {
   static createTodo(req, res) {

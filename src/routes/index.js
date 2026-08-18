@@ -1,9 +1,9 @@
 import express from 'express';
-import UsersController from '../controllers/usersController';
-import TodoController from '../controllers/todoController';
-import { authValidator, todoValidator } from '../middlewares/validation';
-import { authUser } from '../helpers'
-import upload, { handleUploadedImage } from '../middlewares/fileupload';
+import UsersController from '../controllers/usersController.js';
+import TodoController from '../controllers/todoController.js';
+import { authValidator, todoValidator } from '../middlewares/validation/index.js';
+import { authUser } from '../helpers.js';
+import upload, { handleUploadedImage } from '../middlewares/fileupload.js';
 
 const router = express.Router();
 

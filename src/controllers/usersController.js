@@ -1,6 +1,6 @@
-import { users } from '../model';
+import { users } from '../model/index.js';
 import bcrypt from 'bcryptjs';
-import { genToken } from '../helpers'
+import { genToken } from '../helpers.js'
 
 class UsersController  {
   static signUp(req, res)  {

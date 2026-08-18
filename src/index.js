@@ -1,7 +1,7 @@
 
 import express from 'express';
 import bodyParser from 'body-parser';
-import router from './routes/index';
+import router from './routes/index.js';
 import promClient from 'prom-client';
 import cors from 'cors';
 import path from 'path';
